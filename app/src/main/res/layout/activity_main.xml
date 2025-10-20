@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="40dp"
+    android:fitsSystemWindows="true"
+    android:windowSoftInputMode="adjustPan"
+    android:orientation="vertical">
+
+    <!-- Horizontal Layout for Spinner and Buttons -->
+    <LinearLayout
+        android:id="@+id/top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+
+        <!-- Spinner for selecting WebView -->
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="16dp" />
+
+        <!-- Button to add account -->
+        <Button
+            android:id="@+id/add_account_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add"
+            android:layout_marginEnd="16dp" />
+
+        <!-- Button to delete account -->
+        <Button
+            android:id="@+id/delete_account_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete" />
+    </LinearLayout>
+
+    <!-- LinearLayout to hold dynamically created WebViews -->
+    <LinearLayout
+        android:id="@+id/webview_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginBottom="16dp">
+        <!-- WebViews will be added dynamically here -->
+    </LinearLayout>
+
+    <!-- TextView to display cookies -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/cookiesTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Cookies will be displayed here"
+            android:padding="16dp"
+            android:background="#F0F0F0"
+            android:textSize="14sp"
+            android:scrollbars="vertical" />
+    </ScrollView>
+
+    <!-- Horizontal Layout for buttons -->
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="60dp"
+        android:weightSum="3"> <!-- Ensure equal distribution -->
+
+        <Button
+            android:id="@+id/get_cookies_button"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:text="Get Cookies"
+            android:layout_weight="1"
+            android:layout_marginEnd="16dp" />
+
+        <Button
+            android:id="@+id/clear_cookies_button"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:text="Clear Cookies"
+            android:layout_weight="1"
+            android:layout_marginEnd="16dp" />
+
+        <Button
+            android:id="@+id/refresh_button"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:text="Refresh"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+</LinearLayout>

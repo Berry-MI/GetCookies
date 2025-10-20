@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Make sure to set the statusBarColor in the theme -->
+        <item name="android:statusBarColor">@color/statusBarColor</item>
+        <!-- Remove any transparency configuration -->
+        <item name="android:windowTranslucentStatus">false</item>
+    </style>
+</resources>
