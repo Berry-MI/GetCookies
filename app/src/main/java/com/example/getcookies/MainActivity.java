@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Set;
 public class MainActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "AppPrefs";
@@ -303,27 +304,68 @@ public class MainActivity extends AppCompatActivity {
         for (String account : accounts) {
             jsonArray.put(account);
         }
-        editor.putString(KEY_ACCOUNTS, jsonArray.toString());
+        if (accounts.isEmpty()) {
+            editor.remove(KEY_ACCOUNTS);
+        } else {
+            editor.putString(KEY_ACCOUNTS, jsonArray.toString());
+        }
         editor.apply();
     }
 
     private void loadAccounts() {
         SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String json = sharedPreferences.getString(KEY_ACCOUNTS, null);
         accounts.clear();
-        if (json != null) {
-            try {
-                JSONArray jsonArray = new JSONArray(json);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    String account = jsonArray.optString(i);
-                    if (account != null && !account.isEmpty() && !accounts.contains(account)) {
-                        accounts.add(account);
-                    }
+
+        boolean loaded = false;
+        try {
+            String json = sharedPreferences.getString(KEY_ACCOUNTS, null);
+            if (json != null) {
+                loaded = parseAccountsFromJson(json);
+            }
+        } catch (ClassCastException e) {
+            Log.w("MainActivity", "Detected legacy account storage format", e);
+        }
+
+        if (!loaded) {
+            Set<String> legacyAccounts = sharedPreferences.getStringSet(KEY_ACCOUNTS, null);
+            if (legacyAccounts != null) {
+                for (String account : legacyAccounts) {
+                    addAccountIfValid(account);
                 }
-            } catch (JSONException e) {
-                Log.e("MainActivity", "Failed to parse accounts", e);
+                if (!accounts.isEmpty()) {
+                    saveAccounts();
+                }
             }
         }
+    }
+
+    private boolean parseAccountsFromJson(String json) {
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            boolean addedAny = false;
+            for (int i = 0; i < jsonArray.length(); i++) {
+                String account = jsonArray.optString(i);
+                if (addAccountIfValid(account)) {
+                    addedAny = true;
+                }
+            }
+            return addedAny;
+        } catch (JSONException e) {
+            Log.e("MainActivity", "Failed to parse accounts", e);
+            return false;
+        }
+    }
+
+    private boolean addAccountIfValid(String accountName) {
+        if (accountName == null) {
+            return false;
+        }
+        String trimmed = accountName.trim();
+        if (trimmed.isEmpty() || accounts.contains(trimmed)) {
+            return false;
+        }
+        accounts.add(trimmed);
+        return true;
     }
 
     private void saveWebViewState(String accountName, WebView webView) {
