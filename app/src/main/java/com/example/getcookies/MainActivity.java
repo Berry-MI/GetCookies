@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_WEBVIEW_URL_PREFIX = "webview_url_";
     private static final String DEFAULT_LOGIN_URL = "https://sso.weidian.com/login/index.php?redirect=https://weidian.com/weidian-h5/user/index.html";
 
+    private View accountPanel;
+    private View pagePanel;
     private FrameLayout webViewContainer;
     private ListView accountListView;
     private Button addAccountButton;
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private Button getCookiesButton;
     private Button clearCookiesButton;
     private Button refreshButton;
+    private Button showAccountsButton;
+    private Button showPageButton;
     private TextView cookiesTextView;
 
     private final ArrayList<String> accounts = new ArrayList<>();
@@ -67,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        accountPanel = findViewById(R.id.account_panel);
+        pagePanel = findViewById(R.id.page_panel);
         webViewContainer = findViewById(R.id.webview_container);
         accountListView = findViewById(R.id.account_list);
         addAccountButton = findViewById(R.id.add_account_button);
@@ -74,20 +80,28 @@ public class MainActivity extends AppCompatActivity {
         getCookiesButton = findViewById(R.id.get_cookies_button);
         clearCookiesButton = findViewById(R.id.clear_cookies_button);
         refreshButton = findViewById(R.id.refresh_button);
+        showAccountsButton = findViewById(R.id.show_accounts_button);
+        showPageButton = findViewById(R.id.show_page_button);
         cookiesTextView = findViewById(R.id.cookiesTextView);
 
         loadAccounts();
         setupAccountList();
         createWebViewsForAccounts();
         setupButtons();
+        setupPanelToggles();
+        showAccountPanel();
         updateDeleteButtonState();
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 WebView currentWebView = getCurrentWebView();
-                if (currentWebView != null && currentWebView.canGoBack()) {
+                if (pagePanel.getVisibility() == View.VISIBLE && currentWebView != null && currentWebView.canGoBack()) {
                     currentWebView.goBack();
+                } else if (pagePanel.getVisibility() == View.VISIBLE) {
+                    showAccountPanel();
+                } else {
+                    finish();
                 }
             }
         });
@@ -101,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 showWebViewAt(position);
+                showPagePanel();
             }
         });
     }
@@ -150,6 +165,25 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Page Refreshed", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setupPanelToggles() {
+        showAccountsButton.setOnClickListener(v -> showAccountPanel());
+        showPageButton.setOnClickListener(v -> showPagePanel());
+    }
+
+    private void showAccountPanel() {
+        accountPanel.setVisibility(View.VISIBLE);
+        pagePanel.setVisibility(View.GONE);
+        showAccountsButton.setEnabled(false);
+        showPageButton.setEnabled(true);
+    }
+
+    private void showPagePanel() {
+        accountPanel.setVisibility(View.GONE);
+        pagePanel.setVisibility(View.VISIBLE);
+        showAccountsButton.setEnabled(true);
+        showPageButton.setEnabled(false);
     }
 
     private void promptForNewAccount() {
